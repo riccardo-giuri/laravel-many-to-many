@@ -39,6 +39,21 @@
                 </select>
             </div>
             <div class="mb-3">
+                <label for="form-label">Tecnologie utilizzate: </label>
+                
+                <div>
+                    @foreach ($tecnologies as $tecnology)
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="tecnologies[]" value="{{$tecnology->id}}" id="{{$tecnology->name}}"
+                                {{$project->tecnologies?->contains($tecnology) ? 'checked' : ''}}>
+                            <label class="form-check-label" for="{{$tecnology->name}}">
+                            {{$tecnology->name}}
+                            </label>
+                        </div>
+                    @endforeach
+                </div>   
+            </div>
+            <div class="mb-3">
                 <label for="form-label">GithubURL</label>
                 <input type="text" class="form-control" name="githubURL" value="{{ $project->githubURL }}">
             </div>

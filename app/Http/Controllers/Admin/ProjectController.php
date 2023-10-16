@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Models\Project;
+use App\Models\Tecnology;
 use App\Models\Type;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -26,8 +27,9 @@ class ProjectController extends Controller
 
     public function create() {
         $types = Type::all();
+        $tecnologies = Tecnology::all();
 
-        return view('admin.projects.create', ["types" => $types]);
+        return view('admin.projects.create', ["types" => $types, "tecnologies" => $tecnologies]);
     }
 
     public function store(ProjectStoreRequest $request) {
@@ -41,14 +43,19 @@ class ProjectController extends Controller
 
         $project = Project::create($data);
 
+        if(key_exists("tecnologies", $data)) {
+            $project->tecnologies()->attach($data['tecnologies']);
+        }
+
         return redirect()->route('admin.projects.index');
     }
 
     public function edit($slug) {
         $project = Project::where("slug", $slug)->first();
         $types = Type::all();
+        $tecnologies = Tecnology::all();
 
-        return view('admin.projects.edit', ["project" => $project, "types" => $types]);
+        return view('admin.projects.edit', ["project" => $project, "types" => $types, "tecnologies" => $tecnologies]);
     }
 
     public function update(ProjectUpdateRequest $request, $slug) {
@@ -71,6 +78,9 @@ class ProjectController extends Controller
             $data["imageURL"] = $image_path;
         }
 
+        //assegno tecnologie
+        $project->tecnologies()->sync($data['tecnologies']);
+
         $project->update($data);
 
         return redirect()->route('admin.projects.show', $project->slug);
@@ -83,6 +93,7 @@ class ProjectController extends Controller
             Storage::delete($project->imageURL);
         }
 
+        $project->tecnologies()->detach();
         $project->delete();
 
         return redirect()->route('admin.projects.index');

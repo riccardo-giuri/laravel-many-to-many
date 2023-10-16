@@ -28,6 +28,12 @@
                         <span>{{$project->type->name}}</span>  
                     </li>
                     <li>
+                        <span class="list_item_title">Tipologie utilizzate: </span>
+                        @foreach ($project->tecnologies as $tecnology)
+                            <span class="badge" style="background-color: rgb({{$tecnology->color}})">{{$tecnology->name}}</span> 
+                        @endforeach 
+                    </li>
+                    <li>
                         <div class="route_buttons d-flex gap-2 mt-2">
                             <a href="{{route('admin.projects.edit', $project->slug)}}" class="btn btn-outline-dark">Modifica Progetto</a>
                             <form action="{{route('admin.projects.destroy', $project->slug)}}" method="POST">
